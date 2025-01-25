@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klimaschutzprojekt</title>
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Klimaschutzprojekt</h1>
+        
+        <div class="form-group">
+            <label for="transport">Transport (Kilometer mit Auto):</label>
+            <input type="number" id="transport" name="transport" required>
+        </div>
+
+        <div class="form-group">
+            <label for="food">Ernährung (CO₂ von Ernährung):</label>
+            <input type="number" id="food" name="food" required>
+        </div>
+
+        <div class="form-group">
+            <label for="energy">Energie (Stromverbrauch):</label>
+            <input type="number" id="energy" name="energy" required>
+        </div>
+
+        <button onclick="calculateCO2()">CO₂ Berechnen</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function calculateCO2() {
+            const transport = document.getElementById('transport').value;
+            const food = document.getElementById('food').value;
+            const energy = document.getElementById('energy').value;
+
+            const data = {
+                transport: parseFloat(transport),
+                food: parseFloat(food),
+                energy: parseFloat(energy)
+            };
+
+            try {
+                const response = await fetch('http://192.168.1.3:5000/calculate-co2', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                const resultDiv = document.getElementById('result');
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = `Gesamt CO₂-Ausstoß: ${result.co2_total.toFixed(2)} kg`;
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
+            }
+        }
+    </script>
+</body>
+</html>

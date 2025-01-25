@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
 
@@ -11,6 +11,10 @@ def calculate_co2():
     
     co2_total = (transport * 0.21) + (food * 2.5) + (energy * 0.5)  # Beispielwerte
     return jsonify({'co2_total': co2_total})
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=5000)
