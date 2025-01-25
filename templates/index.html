@@ -74,10 +74,12 @@
             };
 
             try {
-                const response = await fetch('http://192.168.1.3:5000/calculate-co2', {
+                const response = await fetch('https://afde-2-207-45-12.ngrok-free.app/calculate-co2', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*',
+                        'ngrok-skip-browser-warning': 'true'
                     },
                     body: JSON.stringify(data)
                 });
