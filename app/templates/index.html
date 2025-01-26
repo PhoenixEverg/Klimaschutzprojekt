@@ -74,7 +74,7 @@
             };
 
             try {
-                const response = await fetch('https://concise-partly-colt.ngrok-free.app/calculate-co2', {
+                const response = await fetch('http://127.0.0.1:5000/calculate', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -87,7 +87,13 @@
                 const result = await response.json();
                 const resultDiv = document.getElementById('result');
                 resultDiv.style.display = 'block';
-                resultDiv.innerHTML = `Gesamt CO₂-Ausstoß: ${result.co2_total.toFixed(2)} kg`;
+                resultDiv.innerHTML = `
+                    <p>Gesamt CO₂-Ausstoß: ${result.total_co2.toFixed(2)} kg</p>
+                    <h3>Verbesserungsvorschläge:</h3>
+                    <ul>
+                        ${result.suggestions.map(suggestion => `<li>${suggestion}</li>`).join('')}
+                    </ul>
+                `;
             } catch (error) {
                 console.error('Error:', error);
                 alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
