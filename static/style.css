@@ -1,7 +1,6 @@
 body {
     font-family: 'HG Kyokashotai', sans-serif;
 }
-
 .container {
     max-width: 600px;
     margin: 0 auto;
@@ -21,7 +20,7 @@ input {
 } 
 button {
     padding: 10px 20px;
-    background-color: #4CAF50;
+    background-color: #ce721c;
     color: white;
     border: none;
     cursor: pointer;
