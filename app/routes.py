@@ -6,6 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from io import BytesIO
 import matplotlib
+import matplotlib.ticker as ticker
 matplotlib.use('Agg')  # Required for non-interactive backend
 
 main = Blueprint("main", __name__)
@@ -72,6 +73,10 @@ def get_visualization():
     # Use a more modern style
     plt.style.use('seaborn-v0_8-darkgrid')
     
+    # Set a font that supports subscripts
+    plt.rcParams['font.family'] = 'DejaVu Sans'
+    # or try 'Liberation Sans' if DejaVu Sans is not available
+    
     # Create figure with better spacing and higher resolution
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 12), dpi=100)
     
@@ -82,14 +87,14 @@ def get_visualization():
              linewidth=2,
              markersize=8,
              alpha=0.4,
-             label='Individual measurements')
+             label='Individuelle Messungen')
     
     # Calculate total average
     total_average = df['total_co2'].mean()
     
     # Add average text annotation
     ax1.text(0.02, 0.95, 
-             f'Gesamtdurchschnitt: {total_average:.1f} kg CO₂',
+             f'Gesamtdurchschnitt: {total_average:.1f} kg CO2',
              transform=ax1.transAxes,
              bbox=dict(facecolor='white', alpha=0.8, edgecolor='none', pad=3.0),
              fontsize=12,
@@ -112,39 +117,55 @@ def get_visualization():
                   fontweight='bold',
                   pad=20)
     ax1.set_ylabel('Totales CO2 (kg)', fontsize=14)
-    ax1.set_xlabel('Eintrag', fontsize=14)
+    ax1.set_xlabel('', fontsize=14)
     
-    # Plot 2: Enhanced stacked bar chart
+    # Plot 2: Modifizierte Version für absolute CO2-Werte
     components = ['car_km', 'bus_km', 'energy_kwh', 'meat_kg', 'veggie_kg']
+    co2_factors = {
+        'car_km': 0.2,      # kg CO2 pro km
+        'bus_km': 0.08,     # kg CO2 pro km
+        'energy_kwh': 0.4,  # kg CO2 pro kWh
+        'meat_kg': 13.3,    # kg CO2 pro kg
+        'veggie_kg': 2.0    # kg CO2 pro kg
+    }
+    
+    # Berechne absolute CO2-Werte für jede Quelle
+    co2_data = pd.DataFrame()
+    for comp in components:
+        co2_data[comp] = df[comp] * co2_factors[comp]
+    
     colors = ['#e74c3c', '#3498db', '#f1c40f', '#9b59b6', '#1abc9c']
     labels = ['Auto', 'Bus', 'Energie', 'Fleisch', 'Gemüse']
     
-    # Calculate percentage for each component
-    df_percent = df[components].div(df[components].sum(axis=1), axis=0) * 100
+    co2_data.plot(kind='bar',
+                 stacked=True,
+                 ax=ax2,
+                 color=colors)
     
-    df_percent.plot(kind='bar',
-                   stacked=True,
-                   ax=ax2,
-                   color=colors)
-    
-    ax2.set_title('CO2 Quellenverteilung',
+    ax2.set_title('CO2 Ausstoß nach Quelle',
                   fontsize=16,
                   fontweight='bold',
                   pad=20)
-    ax2.set_xlabel('Eintrag', fontsize=14)
-    ax2.set_ylabel('Prozent (%)', fontsize=14)
+    ax2.set_xlabel('', fontsize=14)
+    ax2.set_ylabel('CO2 (kg)', fontsize=14)
     
-    # Enhanced legend
-    ax2.legend(labels,
-              title='CO2 Quellen',
+    # Verbesserte Legende mit CO2-Werten
+    total_co2_per_source = co2_data.sum()
+    labels_with_total = [f'{label} ({total_co2_per_source.iloc[i]:.1f} kg)' 
+                        for i, label in enumerate(labels)]
+    
+    ax2.legend(labels_with_total,
+              title='CO2 Quellen (Gesamt)',
               bbox_to_anchor=(1.05, 1),
               loc='upper left',
               fontsize=12)
     
-    # Improve tick labels
+    # Improve tick labels and format y-axis to show integers
     for ax in [ax1, ax2]:
         ax.tick_params(axis='both', labelsize=12)
         ax.tick_params(axis='x', rotation=45)
+        ax.yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
+        ax.set_xticklabels([])
         for spine in ax.spines.values():
             spine.set_linewidth(1.5)
     
