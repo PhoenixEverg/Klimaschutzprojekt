@@ -38,6 +38,9 @@ def calculate():
 def get_visualization():
     entries = CO2Entry.query.all()
     
+    if not entries:
+        return "Keine Daten vorhanden", 404
+        
     data = {
         'car_km': [],
         'bus_km': [],
@@ -65,20 +68,32 @@ def get_visualization():
     # Create figure with subplots
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10))
     
-    # Plot 1: Total CO2 over time
-    ax1.plot(df['timestamp'], df['total_co2'], 
-             marker='o', 
-             color='#2ecc71', 
-             linewidth=2, 
-             markersize=8)
-    ax1.fill_between(df['timestamp'], df['total_co2'], 
-                     alpha=0.2, 
-                     color='#2ecc71')
-    ax1.set_title('Total CO2 Emissions Over Time', 
-                  fontsize=14, 
+    # Plot 1: Total CO2 over time with rolling average
+    ax1.plot(df['timestamp'], df['total_co2'],
+             marker='o',
+             color='#2ecc71',
+             linewidth=2,
+             markersize=8,
+             alpha=0.4,
+             label='Individual measurements')
+    
+    # Calculate and plot rolling average
+    rolling_avg = df['total_co2'].rolling(window=3, min_periods=1).mean()
+    ax1.plot(df['timestamp'], rolling_avg,
+             color='#27ae60',
+             linewidth=3,
+             label='Rolling average')
+    
+    ax1.fill_between(df['timestamp'], rolling_avg,
+                     alpha=0.2,
+                     color='#27ae60')
+    
+    ax1.set_title('Total CO2 Emissions Over Time with Rolling Average',
+                  fontsize=14,
                   pad=15)
     ax1.set_ylabel('Total CO2 (kg)', fontsize=12)
     ax1.grid(True, linestyle='--', alpha=0.7)
+    ax1.legend(fontsize=10)
     
     # Plot 2: Stacked bar chart of components
     components = ['car_km', 'bus_km', 'energy_kwh', 'meat_kg', 'veggie_kg']
