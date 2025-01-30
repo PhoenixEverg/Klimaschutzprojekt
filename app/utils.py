@@ -26,10 +26,9 @@ def calculate_co2(data):
 
 def validate_data(data):
     errors = []
-    required_fields = ['distance', 'transport_type']
+    valid_fields = ['car', 'bus', 'energy', 'meat', 'veggie']
     
-    for field in required_fields:
-        if field not in data:
-            errors.append(f"Fehlendes Feld: {field}")
-            
+    if not any(data.get(field, 0) for field in valid_fields):
+        errors.append("Mindestens ein Wert muss größer als 0 sein")
+    
     return errors
