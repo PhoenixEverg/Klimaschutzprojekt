@@ -9,7 +9,7 @@ async function calculateCO2() {
     };
 
     try {
-        const response = await fetch('http://localhost:5000/calculate', {
+        const response = await fetch('https://concise-partly-colt.ngrok-free.app/calculate', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
