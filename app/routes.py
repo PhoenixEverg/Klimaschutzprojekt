@@ -62,13 +62,13 @@ def get_visualization():
     
     df = pd.DataFrame(data)
     
-    # Ändern Sie den Stil zu 'ggplot' statt 'seaborn'
-    plt.style.use('ggplot')
+    # Use a more modern style
+    plt.style.use('seaborn-v0_8-darkgrid')
     
-    # Create figure with subplots
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10))
+    # Create figure with better spacing and higher resolution
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 12), dpi=100)
     
-    # Plot 1: Total CO2 over time with rolling average
+    # Plot 1: Enhanced Total CO2 over time
     ax1.plot(df['timestamp'], df['total_co2'],
              marker='o',
              color='#2ecc71',
@@ -77,58 +77,88 @@ def get_visualization():
              alpha=0.4,
              label='Individual measurements')
     
-    # Calculate and plot rolling average
-    rolling_avg = df['total_co2'].rolling(window=3, min_periods=1).mean()
+    # Calculate total average
+    total_average = df['total_co2'].mean()
+    
+    # Add average text annotation
+    ax1.text(0.02, 0.95, 
+             f'Total Average: {total_average:.1f} kg CO2',
+             transform=ax1.transAxes,
+             bbox=dict(facecolor='white', alpha=0.8, edgecolor='none', pad=3.0),
+             fontsize=12,
+             fontweight='bold')
+    
+    # Improved rolling average with longer window
+    rolling_avg = df['total_co2'].rolling(window=5, min_periods=1).mean()
     ax1.plot(df['timestamp'], rolling_avg,
              color='#27ae60',
              linewidth=3,
-             label='Rolling average')
+             label='Rolling average (5 entries)')
     
     ax1.fill_between(df['timestamp'], rolling_avg,
                      alpha=0.2,
                      color='#27ae60')
     
-    ax1.set_title('Total CO2 Emissions Over Time with Rolling Average',
-                  fontsize=14,
-                  pad=15)
-    ax1.set_ylabel('Total CO2 (kg)', fontsize=12)
-    ax1.grid(True, linestyle='--', alpha=0.7)
-    ax1.legend(fontsize=10)
+    # Enhanced title and labels
+    ax1.set_title('CO2 Emissions Trend Analysis',
+                  fontsize=16,
+                  fontweight='bold',
+                  pad=20)
+    ax1.set_ylabel('Total CO2 (kg)', fontsize=14)
+    ax1.set_xlabel('Date', fontsize=14)
     
-    # Plot 2: Stacked bar chart of components
+    # Plot 2: Enhanced stacked bar chart
     components = ['car_km', 'bus_km', 'energy_kwh', 'meat_kg', 'veggie_kg']
     colors = ['#e74c3c', '#3498db', '#f1c40f', '#9b59b6', '#1abc9c']
-    labels = ['Car (km)', 'Bus (km)', 'Energy (kWh)', 'Meat (kg)', 'Vegetables (kg)']
+    labels = ['Car Travel', 'Bus Travel', 'Energy Usage', 'Meat Consumption', 'Vegetable Consumption']
     
-    df[components].plot(kind='bar', 
-                       stacked=True, 
-                       ax=ax2, 
-                       color=colors)
+    # Calculate percentage for each component
+    df_percent = df[components].div(df[components].sum(axis=1), axis=0) * 100
     
-    ax2.set_title('Breakdown of CO2 Sources', 
-                  fontsize=14, 
-                  pad=15)
-    ax2.set_xlabel('Entry Number', fontsize=12)
-    ax2.set_ylabel('Amount', fontsize=12)
-    ax2.legend(labels, 
-              title='Sources', 
-              bbox_to_anchor=(1.05, 1), 
-              loc='upper left')
-    ax2.grid(True, linestyle='--', alpha=0.7)
+    df_percent.plot(kind='bar',
+                   stacked=True,
+                   ax=ax2,
+                   color=colors)
     
-    # Rotate x-axis labels
-    ax1.tick_params(axis='x', rotation=45)
-    ax2.tick_params(axis='x', rotation=45)
+    ax2.set_title('CO2 Source Distribution',
+                  fontsize=16,
+                  fontweight='bold',
+                  pad=20)
+    ax2.set_xlabel('Entry Number', fontsize=14)
+    ax2.set_ylabel('Percentage (%)', fontsize=14)
     
-    # Adjust layout to prevent label cutoff
-    plt.tight_layout()
+    # Enhanced legend
+    ax2.legend(labels,
+              title='CO2 Sources',
+              bbox_to_anchor=(1.05, 1),
+              loc='upper left',
+              fontsize=12)
     
-    # Save plot to a bytes buffer with higher DPI for better quality
+    # Improve tick labels
+    for ax in [ax1, ax2]:
+        ax.tick_params(axis='both', labelsize=12)
+        ax.tick_params(axis='x', rotation=45)
+        for spine in ax.spines.values():
+            spine.set_linewidth(1.5)
+    
+    # Add grid with better visibility
+    ax1.grid(True, linestyle='--', alpha=0.6)
+    ax2.grid(True, linestyle='--', alpha=0.6)
+    
+    # Add a subtle background color
+    fig.patch.set_facecolor('#f8f9fa')
+    
+    # Adjust layout with more padding
+    plt.tight_layout(pad=3.0)
+    
+    # Save with higher quality
     buf = BytesIO()
-    plt.savefig(buf, 
-                format='png', 
-                dpi=300, 
-                bbox_inches='tight')
+    plt.savefig(buf,
+                format='png',
+                dpi=300,
+                bbox_inches='tight',
+                facecolor=fig.get_facecolor(),
+                edgecolor='none')
     buf.seek(0)
     plt.close()
     
