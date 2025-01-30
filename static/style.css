@@ -44,6 +44,7 @@ button {
     color: white;
     border: none;
     cursor: pointer;
+    transition: background-color 4s ease;
 }
 #result {
     margin-top: 20px;
@@ -58,4 +59,9 @@ button {
 
 .dark-background::before {
     opacity: 1;
+}
+
+.dark-background button {
+    background-color: #1a1a1a;
+    border: 1px solid #ffffff;
 }
