@@ -29,8 +29,15 @@ def calculate():
         total_co2=result["total_co2"] # type: ignore
     )
 
+    # Calculate new average after adding entry
     db.session.add(new_entry)
-    db.session.commit()
+    db.session.commit()  # Commit here to ensure the new entry is included in the average
+    
+    all_entries = CO2Entry.query.with_entities(CO2Entry.total_co2).all()
+    average_co2 = sum(entry[0] for entry in all_entries) / len(all_entries)
+    
+    # Update the result to include the average
+    result["average_co2"] = round(average_co2, 1)
 
     return jsonify(result)
 
@@ -69,7 +76,7 @@ def get_visualization():
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 12), dpi=100)
     
     # Plot 1: Enhanced Total CO2 over time
-    ax1.plot(df['timestamp'], df['total_co2'],
+    ax1.plot(range(len(df['total_co2'])), df['total_co2'],
              marker='o',
              color='#2ecc71',
              linewidth=2,
@@ -82,7 +89,7 @@ def get_visualization():
     
     # Add average text annotation
     ax1.text(0.02, 0.95, 
-             f'Total Average: {total_average:.1f} kg CO2',
+             f'Gesamtdurchschnitt: {total_average:.1f} kg CO₂',
              transform=ax1.transAxes,
              bbox=dict(facecolor='white', alpha=0.8, edgecolor='none', pad=3.0),
              fontsize=12,
@@ -90,27 +97,27 @@ def get_visualization():
     
     # Improved rolling average with longer window
     rolling_avg = df['total_co2'].rolling(window=5, min_periods=1).mean()
-    ax1.plot(df['timestamp'], rolling_avg,
+    ax1.plot(range(len(df['total_co2'])), rolling_avg,
              color='#27ae60',
              linewidth=3,
-             label='Rolling average (5 entries)')
+             label='Durchschnitt (5 Einträge)')
     
-    ax1.fill_between(df['timestamp'], rolling_avg,
+    ax1.fill_between(range(len(df['total_co2'])), rolling_avg,
                      alpha=0.2,
                      color='#27ae60')
     
     # Enhanced title and labels
-    ax1.set_title('CO2 Emissions Trend Analysis',
+    ax1.set_title('CO2 Ausstoß durchschnittlich',
                   fontsize=16,
                   fontweight='bold',
                   pad=20)
-    ax1.set_ylabel('Total CO2 (kg)', fontsize=14)
-    ax1.set_xlabel('Date', fontsize=14)
+    ax1.set_ylabel('Totales CO2 (kg)', fontsize=14)
+    ax1.set_xlabel('Eintrag', fontsize=14)
     
     # Plot 2: Enhanced stacked bar chart
     components = ['car_km', 'bus_km', 'energy_kwh', 'meat_kg', 'veggie_kg']
     colors = ['#e74c3c', '#3498db', '#f1c40f', '#9b59b6', '#1abc9c']
-    labels = ['Car Travel', 'Bus Travel', 'Energy Usage', 'Meat Consumption', 'Vegetable Consumption']
+    labels = ['Auto', 'Bus', 'Energie', 'Fleisch', 'Gemüse']
     
     # Calculate percentage for each component
     df_percent = df[components].div(df[components].sum(axis=1), axis=0) * 100
@@ -120,16 +127,16 @@ def get_visualization():
                    ax=ax2,
                    color=colors)
     
-    ax2.set_title('CO2 Source Distribution',
+    ax2.set_title('CO2 Quellenverteilung',
                   fontsize=16,
                   fontweight='bold',
                   pad=20)
-    ax2.set_xlabel('Entry Number', fontsize=14)
-    ax2.set_ylabel('Percentage (%)', fontsize=14)
+    ax2.set_xlabel('Eintrag', fontsize=14)
+    ax2.set_ylabel('Prozent (%)', fontsize=14)
     
     # Enhanced legend
     ax2.legend(labels,
-              title='CO2 Sources',
+              title='CO2 Quellen',
               bbox_to_anchor=(1.05, 1),
               loc='upper left',
               fontsize=12)
