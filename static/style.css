@@ -1,5 +1,6 @@
 body {
     font-family: 'Noto Sans JP', Arial, sans-serif;
+    background: linear-gradient(to right, #06ff1b, #d6c803);
 }
 .container {
     max-width: 600px;
@@ -30,4 +31,8 @@ button {
     padding: 10px;
     border: 1px solid #ddd;
     display: none;
+}
+.dark-background {
+    background: linear-gradient(to right, #7c7878, #1a1a1a);
+    color: white;
 }

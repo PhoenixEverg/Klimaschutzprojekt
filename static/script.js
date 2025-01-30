@@ -30,6 +30,12 @@ async function calculateCO2() {
                 ${result.suggestions.map(suggestion => `<li>${suggestion}</li>`).join('')}
             </ul>
         `;
+
+        if (result.total_co2 > 1000) {
+            document.body.classList.add('dark-background');
+        } else {
+            document.body.classList.remove('dark-background');
+        }
     } catch (error) {
         console.error('Error:', error);
         alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
