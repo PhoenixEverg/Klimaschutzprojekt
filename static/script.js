@@ -1,16 +1,15 @@
 async function calculateCO2() {
-    const transport = document.getElementById('transport').value;
-    const food = document.getElementById('food').value;
-    const energy = document.getElementById('energy').value;
-
     const data = {
-        transport: parseFloat(transport),
-        food: parseFloat(food),
-        energy: parseFloat(energy)
+        car: parseFloat(document.getElementById('car').value) || 0,
+        bus: parseFloat(document.getElementById('bus').value) || 0,
+        bike: parseFloat(document.getElementById('bike').value) || 0,
+        meat: parseFloat(document.getElementById('meat').value) || 0,
+        veggie: parseFloat(document.getElementById('veggie').value) || 0,
+        energy: parseFloat(document.getElementById('energy').value) || 0
     };
 
     try {
-        const response = await fetch('http://localhost:5000/calculate', {
+        const response = await fetch('https://concise-partly-colt.ngrok-free.app/calculate', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
