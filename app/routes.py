@@ -59,8 +59,8 @@ def get_visualization():
     
     df = pd.DataFrame(data)
     
-    # Set style for better-looking plots
-    plt.style.use('seaborn')
+    # Ändern Sie den Stil zu 'ggplot' statt 'seaborn'
+    plt.style.use('ggplot')
     
     # Create figure with subplots
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10))
