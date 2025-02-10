@@ -9,7 +9,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: 72px;
+    font-size: 16px;
 }
 .nav-button {
     padding: 10px 20px;
@@ -45,4 +45,15 @@ body {
 
 .music-button:hover {
     transform: scale(1.1);
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.intro {
+    max-width: 800px;
+    padding: 20px;
+    text-align: center;
 }
