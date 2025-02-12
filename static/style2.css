@@ -20,6 +20,10 @@ body {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s;
+    animation: fadeIn 1s ease-out;
+    animation-delay: 1s;
+    opacity: 0;
+    animation-fill-mode: forwards;
 }
 
 .nav-button:hover {
@@ -43,17 +47,57 @@ body {
     white-space: nowrap;
 }
 
-.music-button:hover {
-    transform: scale(1.1);
-}
-
 h1 {
     font-size: 2.5rem;
     margin-bottom: 1.5rem;
+    animation: slideUp 1s ease-out;
 }
 
 .intro {
     max-width: 800px;
     padding: 20px;
     text-align: center;
+    animation: fadeIn 1.5s ease-out;
+}
+
+.intro p, .intro ul {
+    animation: slideUp 1s ease-out;
+    animation-delay: 0.5s;
+    opacity: 0;
+    animation-fill-mode: forwards;
+}
+
+/* Add animation keyframes */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Add page transition styles */
+.fade-out {
+    animation: fadeOut 1s ease-out forwards;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
 }
