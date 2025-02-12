@@ -1,3 +1,29 @@
+function nextSection(sectionNumber) {
+    document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'none';
+    });
+    document.getElementById(`section${sectionNumber}`).style.display = 'block';
+    
+    // Update progress bar
+    document.querySelectorAll('.step').forEach(step => {
+        step.classList.remove('active');
+    });
+    document.querySelector(`[data-step="${sectionNumber}"]`).classList.add('active');
+}
+
+function previousSection(sectionNumber) {
+    document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'none';
+    });
+    document.getElementById(`section${sectionNumber}`).style.display = 'block';
+    
+    // Update progress bar
+    document.querySelectorAll('.step').forEach(step => {
+        step.classList.remove('active');
+    });
+    document.querySelector(`[data-step="${sectionNumber}"]`).classList.add('active');
+}
+
 async function calculateCO2() {
     const data = {
         car: parseFloat(document.getElementById('car').value) || 0,
