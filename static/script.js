@@ -1,9 +1,29 @@
 function nextSection(sectionNumber) {
+    // Remove active class from all sections
     document.querySelectorAll('.section').forEach(section => {
-        section.style.display = 'none';
+        section.classList.remove('active');
+        section.classList.add('slide-right');
+        section.classList.remove('slide-left');
     });
-    document.getElementById(`section${sectionNumber}`).style.display = 'block';
     
+    // Hide all sections and remove transform classes
+    setTimeout(() => {
+        document.querySelectorAll('.section').forEach(section => {
+            section.style.display = 'none';
+            section.classList.remove('slide-right');
+            section.classList.remove('slide-left');
+        });
+        
+        // Show and animate new section
+        const newSection = document.getElementById(`section${sectionNumber}`);
+        newSection.style.display = 'block';
+        newSection.classList.add('slide-left');
+        setTimeout(() => {
+            newSection.classList.remove('slide-left');
+            newSection.classList.add('active');
+        }, 50);
+    }, 500);
+
     // Update progress bar
     document.querySelectorAll('.step').forEach(step => {
         step.classList.remove('active');
@@ -12,11 +32,29 @@ function nextSection(sectionNumber) {
 }
 
 function previousSection(sectionNumber) {
+    // Remove active class and add slide-left animation
     document.querySelectorAll('.section').forEach(section => {
-        section.style.display = 'none';
+        section.classList.remove('active');
+        section.classList.add('slide-left');
+        section.classList.remove('slide-right');
     });
-    document.getElementById(`section${sectionNumber}`).style.display = 'block';
     
+    setTimeout(() => {
+        document.querySelectorAll('.section').forEach(section => {
+            section.style.display = 'none';
+            section.classList.remove('slide-right');
+            section.classList.remove('slide-left');
+        });
+        
+        const newSection = document.getElementById(`section${sectionNumber}`);
+        newSection.style.display = 'block';
+        newSection.classList.add('slide-right');
+        setTimeout(() => {
+            newSection.classList.remove('slide-right');
+            newSection.classList.add('active');
+        }, 50);
+    }, 500);
+
     // Update progress bar
     document.querySelectorAll('.step').forEach(step => {
         step.classList.remove('active');
@@ -55,6 +93,11 @@ async function calculateCO2() {
                 ${result.suggestions.map(suggestion => `<li>${suggestion}</li>`).join('')}
             </ul>
         `;
+        
+        // Add animation to result
+        setTimeout(() => {
+            resultDiv.classList.add('active');
+        }, 50);
 
         if (result.total_co2 > 1000) {
             document.body.classList.add('dark-background');
