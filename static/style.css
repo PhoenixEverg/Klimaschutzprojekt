@@ -5,6 +5,10 @@ body {
     min-height: 100vh;
     margin: 0;
     transition: color 4s ease;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 body::before {
