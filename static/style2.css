@@ -67,6 +67,17 @@ h1 {
     animation-fill-mode: forwards;
 }
 
+.intro ul {
+    list-style-position: inside;
+    padding-left: 0;
+    margin: 1em 0;
+}
+
+.intro li {
+    margin: 0.5em 0;
+    line-height: 1.4;
+}
+
 /* Add animation keyframes */
 @keyframes fadeIn {
     from {
