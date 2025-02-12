@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klimaschutzprojekt</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Klimaschutzprojekt</h1>
+        <p>Hier können Sie Ihren CO₂-Ausstoß berechnen und Verbesserungsvorschläge erhalten.</p>
+        
+        <h2>Transport</h2>
+        <div class="form-group">
+            <label for="car">Auto (Kilometer):</label>
+            <input type="number" id="car" name="car" min="0" required>
+        </div>
+        <div class="form-group">
+            <label for="bus">Bus/ÖPNV (Kilometer):</label>
+            <input type="number" id="bus" name="bus" min="0" required>
+        </div>
+        <div class="form-group">
+            <label for="bike">Fahrrad (Kilometer):</label>
+            <input type="number" id="bike" name="bike" min="0" required>
+        </div>
+
+        <h2>Ernährung</h2>
+        <div class="form-group">
+            <label for="meat">Fleischkonsum (kg):</label>
+            <input type="number" id="meat" name="meat" min="0" required>
+        </div>
+        <div class="form-group">
+            <label for="veggie">Gemüsekonsum (kg):</label>
+            <input type="number" id="veggie" name="veggie" min="0" required>
+        </div>
+
+        <h2>Energie</h2>
+        <div class="form-group">
+            <label for="energy">Stromverbrauch (kWh):</label>
+            <input type="number" id="energy" name="energy" min="0" required>
+        </div>
+
+        <button type="button" onclick="calculateCO2()">CO₂ Berechnen</button>
+
+        <div id="result"></div>
+    </div>
+    <script src="static/script.js"></script>
+</body>
