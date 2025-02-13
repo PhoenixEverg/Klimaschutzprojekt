@@ -1,3 +1,67 @@
+function nextSection(sectionNumber) {
+    // Remove active class from all sections
+    document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active');
+        section.classList.add('slide-right');
+        section.classList.remove('slide-left');
+    });
+    
+    // Hide all sections and remove transform classes
+    setTimeout(() => {
+        document.querySelectorAll('.section').forEach(section => {
+            section.style.display = 'none';
+            section.classList.remove('slide-right');
+            section.classList.remove('slide-left');
+        });
+        
+        // Show and animate new section
+        const newSection = document.getElementById(`section${sectionNumber}`);
+        newSection.style.display = 'block';
+        newSection.classList.add('slide-left');
+        setTimeout(() => {
+            newSection.classList.remove('slide-left');
+            newSection.classList.add('active');
+        }, 50);
+    }, 500);
+
+    // Update progress bar
+    document.querySelectorAll('.step').forEach(step => {
+        step.classList.remove('active');
+    });
+    document.querySelector(`[data-step="${sectionNumber}"]`).classList.add('active');
+}
+
+function previousSection(sectionNumber) {
+    // Remove active class and add slide-left animation
+    document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active');
+        section.classList.add('slide-left');
+        section.classList.remove('slide-right');
+    });
+    
+    setTimeout(() => {
+        document.querySelectorAll('.section').forEach(section => {
+            section.style.display = 'none';
+            section.classList.remove('slide-right');
+            section.classList.remove('slide-left');
+        });
+        
+        const newSection = document.getElementById(`section${sectionNumber}`);
+        newSection.style.display = 'block';
+        newSection.classList.add('slide-right');
+        setTimeout(() => {
+            newSection.classList.remove('slide-right');
+            newSection.classList.add('active');
+        }, 50);
+    }, 500);
+
+    // Update progress bar
+    document.querySelectorAll('.step').forEach(step => {
+        step.classList.remove('active');
+    });
+    document.querySelector(`[data-step="${sectionNumber}"]`).classList.add('active');
+}
+
 async function calculateCO2() {
     const data = {
         car: parseFloat(document.getElementById('car').value) || 0,
@@ -20,23 +84,35 @@ async function calculateCO2() {
         });
 
         const result = await response.json();
-        const resultDiv = document.getElementById('result');
-        resultDiv.style.display = 'block';
-        resultDiv.innerHTML = `
-            <p>Gesamt CO₂-Ausstoß: ${result.total_co2.toFixed(2)} kg</p>
-            <h3>Verbesserungsvorschläge:</h3>
-            <ul>
-                ${result.suggestions.map(suggestion => `<li>${suggestion}</li>`).join('')}
-            </ul>
-        `;
+        const co2Value = result.total_co2.toFixed(2);
+        
+        // Weiterleitung mit URL-Parameter
+        window.location.href = `result.html?co2=${co2Value}`;
 
-        if (result.total_co2 > 1000) {
-            document.body.classList.add('dark-background');
-        } else {
-            document.body.classList.remove('dark-background');
-        }
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Fehler:', error);
         alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
     }
 }
+
+// Funktion zum Anzeigen des Ergebnisses auf der result.html Seite
+function showResult() {
+    const resultDiv = document.getElementById('result');
+    if (resultDiv) {
+        const co2Result = localStorage.getItem('co2Result');
+        if (co2Result) {
+            resultDiv.innerHTML = `
+                <h2>Dein CO₂-Ausstoß ist: ${co2Result} kg</h2>
+            `;
+            resultDiv.style.display = 'block';
+            setTimeout(() => {
+                resultDiv.classList.add('active');
+            }, 50);
+            // Löschen Sie das Ergebnis aus dem localStorage
+            localStorage.removeItem('co2Result');
+        }
+    }
+}
+
+// Führen Sie showResult aus, wenn die Seite geladen wird
+document.addEventListener('DOMContentLoaded', showResult);

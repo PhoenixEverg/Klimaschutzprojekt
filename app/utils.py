@@ -20,7 +20,7 @@ def calculate_co2(data):
     if energy_co2 > 200:
         suggestions.append("Überlege, auf Ökostrom umzusteigen.")
     if food_co2 > 50:
-        suggestions.append("Reduziere deinen Fleischkonsum für eine bessere CO₂-Bilanz.")
+        suggestions.append("Reduziere deinen Fleischkonsum für ein besseren CO₂-Fußabdruck.")
 
     return {"total_co2": total, "suggestions": suggestions}
 
