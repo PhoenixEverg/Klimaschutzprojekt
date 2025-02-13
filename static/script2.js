@@ -20,4 +20,38 @@ document.addEventListener('DOMContentLoaded', function() {
         audioPlayer.src = playlist[currentSong];
         audioPlayer.play().catch(e => console.log("Playback error:", e));
     });
+
+    // Add page transition handler
+    document.querySelector('.nav-button').addEventListener('click', function(e) {
+        e.preventDefault(); // Prevent default navigation
+        
+        // Stop the audio
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+        
+        // Add fade-out animation to all main elements
+        document.querySelector('.intro').classList.add('fade-out');
+        document.querySelector('.nav-button').classList.add('fade-out');
+        document.querySelector('.music-button').classList.add('fade-out');
+        
+        // Wait for animation to complete before changing page
+        setTimeout(() => {
+            window.location.href = 'Calculator.html';
+        }, 1000); // Match this with animation duration
+    });
+
+    const musicButton = document.querySelector('.music-button');
+    let isPlaying = false;
+
+    musicButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (isPlaying) {
+            audioPlayer.pause();
+            musicButton.textContent = "▶ © 2025-2025 Oliver, Malik, Mika";
+        } else {
+            audioPlayer.play().catch(e => console.log("Playback error:", e));
+            musicButton.textContent = "⏸ © 2025-2025 Oliver, Malik, Mika";
+        }
+        isPlaying = !isPlaying;
+    });
 });
