@@ -84,28 +84,35 @@ async function calculateCO2() {
         });
 
         const result = await response.json();
-        const resultDiv = document.getElementById('result');
-        resultDiv.style.display = 'block';
-        resultDiv.innerHTML = `
-            <p>Gesamt CO₂-Ausstoß: ${result.total_co2.toFixed(2)} kg</p>
-            <h3>Verbesserungsvorschläge:</h3>
-            <ul>
-                ${result.suggestions.map(suggestion => `<li>${suggestion}</li>`).join('')}
-            </ul>
-        `;
+        const co2Value = result.total_co2.toFixed(2);
         
-        // Add animation to result
-        setTimeout(() => {
-            resultDiv.classList.add('active');
-        }, 50);
+        // Weiterleitung mit URL-Parameter
+        window.location.href = `result.html?co2=${co2Value}`;
 
-        if (result.total_co2 > 1000) {
-            document.body.classList.add('dark-background');
-        } else {
-            document.body.classList.remove('dark-background');
-        }
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Fehler:', error);
         alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
     }
 }
+
+// Funktion zum Anzeigen des Ergebnisses auf der result.html Seite
+function showResult() {
+    const resultDiv = document.getElementById('result');
+    if (resultDiv) {
+        const co2Result = localStorage.getItem('co2Result');
+        if (co2Result) {
+            resultDiv.innerHTML = `
+                <h2>Dein CO₂-Ausstoß ist: ${co2Result} kg</h2>
+            `;
+            resultDiv.style.display = 'block';
+            setTimeout(() => {
+                resultDiv.classList.add('active');
+            }, 50);
+            // Löschen Sie das Ergebnis aus dem localStorage
+            localStorage.removeItem('co2Result');
+        }
+    }
+}
+
+// Führen Sie showResult aus, wenn die Seite geladen wird
+document.addEventListener('DOMContentLoaded', showResult);
