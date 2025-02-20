@@ -86,8 +86,22 @@ async function calculateCO2() {
         const result = await response.json();
         const co2Value = result.total_co2.toFixed(2);
         
-        // Weiterleitung mit URL-Parameter
-        window.location.href = `result.html?co2=${co2Value}`;
+        // Calculate individual CO2 values
+        const co2Breakdown = {
+            car: (data.car * 0.21).toFixed(2),
+            bus: (data.bus * 0.05).toFixed(2),
+            meat: (data.meat * 5.0).toFixed(2),
+            veggie: (data.veggie * 2.0).toFixed(2),
+            energy: (data.energy * 0.45).toFixed(2)
+        };
+        
+        // Convert to URL parameters
+        const params = new URLSearchParams({
+            co2: co2Value,
+            ...co2Breakdown
+        });
+        
+        window.location.href = `result.html?${params.toString()}`;
 
     } catch (error) {
         console.error('Fehler:', error);

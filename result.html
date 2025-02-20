@@ -124,36 +124,55 @@
                 transform: translateY(0);
             }
         }
+
+        .co2-breakdown {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+        }
+
+        .breakdown-bars {
+            margin-top: 20px;
+        }
+
+        .breakdown-item {
+            margin-bottom: 15px;
+        }
+
+        .source-label {
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .bar-container {
+            width: 100%;
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .bar {
+            height: 100%;
+            background-color: #4CAF50;
+            transition: width 1s ease-in-out;
+        }
+
+        .high-co2 .bar {
+            background-color: #808080;
+        }
     </style>
 </head>
 <body>
     <div class="page-transition"></div>
     <div class="container">
         <div class="result-container">
-            <script>
-                const urlParams = new URLSearchParams(window.location.search);
-                const co2Result = urlParams.get('co2');
-                if (co2Result) {
-                    const co2Value = parseFloat(co2Result);
-                    const colorClass = co2Value > 1000 ? 'high' : 'normal';
-                    document.write(`
-                        <div class="result-text ${colorClass}">
-                            Dein CO₂-Ausstoß ist: ${co2Result} kg
-                        </div>
-                    `);
-                    
-                    // Füge die Klasse zum Body hinzu, wenn CO2 über 1000kg
-                    if (co2Value > 1000) {
-                        document.body.classList.add('high-co2');
-                    }
-                } else {
-                    document.write(`
-                        <div class="result-text normal">
-                            Kein Ergebnis verfügbar. Bitte führen Sie zuerst die Berechnung durch.
-                        </div>
-                    `);
-                }
-            </script>
+            <div id="resultText"></div>
+            <div class="co2-breakdown">
+                <h3>CO₂-Ausstoß nach Quelle:</h3>
+                <div id="breakdownBars" class="breakdown-bars"></div>
+            </div>
         </div>
         <div style="text-align: center;">
             <button onclick="startTransition('Calculator.html')" class="button">Zurück zum Rechner</button>
@@ -161,6 +180,60 @@
     </div>
 
     <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Display CO2 result
+        const co2Result = urlParams.get('co2');
+        if (co2Result) {
+            const co2Value = parseFloat(co2Result);
+            const colorClass = co2Value > 1000 ? 'high' : 'normal';
+            document.getElementById('resultText').innerHTML = `
+                <div class="result-text ${colorClass}">
+                    Dein CO₂-Ausstoß ist: ${co2Result} kg
+                </div>
+            `;
+            
+            if (co2Value > 1000) {
+                document.body.classList.add('high-co2');
+            }
+        } else {
+            document.getElementById('resultText').innerHTML = `
+                <div class="result-text normal">
+                    Kein Ergebnis verfügbar. Bitte führen Sie zuerst die Berechnung durch.
+                </div>
+            `;
+        }
+
+        // Display breakdown bars
+        const sources = {
+            car: { name: 'Auto', value: parseFloat(urlParams.get('car')) || 0 },
+            bus: { name: 'Bus', value: parseFloat(urlParams.get('bus')) || 0 },
+            meat: { name: 'Fleisch', value: parseFloat(urlParams.get('meat')) || 0 },
+            veggie: { name: 'Gemüse', value: parseFloat(urlParams.get('veggie')) || 0 },
+            energy: { name: 'Energie', value: parseFloat(urlParams.get('energy')) || 0 }
+        };
+
+        const sortedSources = Object.entries(sources)
+            .sort(([,a], [,b]) => b.value - a.value);
+
+        const totalCO2 = parseFloat(urlParams.get('co2')) || 0;
+        let breakdownHTML = '';
+
+        sortedSources.forEach(([key, source]) => {
+            if (source.value > 0) {
+                const percentage = ((source.value / totalCO2) * 100).toFixed(1);
+                breakdownHTML += `
+                    <div class="breakdown-item">
+                        <div class="source-label">${source.name}: ${source.value} kg (${percentage}%)</div>
+                        <div class="bar-container">
+                            <div class="bar" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+        document.getElementById('breakdownBars').innerHTML = breakdownHTML;
+
         function startTransition(url) {
             const transition = document.createElement('div');
             transition.className = 'page-transition';
