@@ -1,11 +1,11 @@
 def calculate_co2(data):
     factors = {
-        "car": 0.109,   # kg CO₂ pro km (Durchschnittsauto)
-        "bus": 0.09,   # kg CO₂ pro km (ÖPNV)
+        "car": 0.21,   # kg CO₂ pro km (Durchschnittsauto)
+        "bus": 0.05,   # kg CO₂ pro km (ÖPNV)
         "bike": 0.00,  # Fahrrad = 0 CO₂
-        "energy": 0.474, # kg CO₂ pro kWh
-        "meat": 6.63,   # kg CO₂ pro kg Fleisch
-        "veggie": 1.13  # kg CO₂ pro kg Gemüse
+        "energy": 0.45, # kg CO₂ pro kWh
+        "meat": 5.0,   # kg CO₂ pro kg Fleisch
+        "veggie": 2.0  # kg CO₂ pro kg Gemüse
     }
 
     transport_co2 = data.get("car", 0) * factors["car"] + data.get("bus", 0) * factors["bus"]

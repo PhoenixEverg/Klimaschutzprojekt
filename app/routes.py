@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 import matplotlib
 import matplotlib.ticker as ticker
+from base64 import b64encode
+import json
 matplotlib.use('Agg')  # Required for non-interactive backend
 
 main = Blueprint("main", __name__)
@@ -39,6 +41,12 @@ def calculate():
     
     # Update the result to include the average
     result["average_co2"] = round(average_co2, 1)
+
+    # Generate base64 key from entry ID
+    history_key = b64encode(str(new_entry.id).encode()).decode()
+    
+    # Add key to result
+    result["history_key"] = history_key
 
     return jsonify(result)
 
@@ -191,3 +199,25 @@ def get_visualization():
     plt.close()
     
     return send_file(buf, mimetype='image/png')
+
+@main.route("/history/<key>", methods=["GET"])
+def get_history(key):
+    try:
+        # Decode base64 key to get entry ID
+        entry_id = int(b64encode(key.encode()).decode())
+        entry = CO2Entry.query.get(entry_id)
+        
+        if not entry:
+            return jsonify({"error": "Invalid key"}), 404
+            
+        return jsonify({
+            "timestamp": entry.timestamp,
+            "car_km": entry.car_km,
+            "bus_km": entry.bus_km,
+            "energy_kwh": entry.energy_kwh,
+            "meat_kg": entry.meat_kg,
+            "veggie_kg": entry.veggie_kg,
+            "total_co2": entry.total_co2
+        })
+    except:
+        return jsonify({"error": "Invalid key"}), 400

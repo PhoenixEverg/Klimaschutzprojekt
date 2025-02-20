@@ -54,39 +54,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         isPlaying = !isPlaying;
     });
-
-    // Login system
-    const loginBtn = document.getElementById('loginBtn');
-    const loginModal = document.getElementById('loginModal');
-    const closeBtn = document.querySelector('.close');
-
-    loginBtn.onclick = function() {
-        loginModal.style.display = "block";
-    }
-
-    closeBtn.onclick = function() {
-        loginModal.style.display = "none";
-    }
-
-    window.onclick = function(event) {
-        if (event.target == loginModal) {
-            loginModal.style.display = "none";
-        }
-    }
 });
-
-// Move validateKey outside the DOMContentLoaded listener
-function validateKey() {
-    const keyInput = document.getElementById('keyInput').value;
-    try {
-        const decodedData = JSON.parse(atob(keyInput));
-        if (decodedData.co2 && decodedData.timestamp) {
-            localStorage.setItem('co2Key', keyInput);
-            window.location.href = `dashboard.html?key=${keyInput}`;
-        } else {
-            alert('Ungültiger CO₂-Key');
-        }
-    } catch (error) {
-        alert('Ungültiger CO₂-Key');
-    }
-}

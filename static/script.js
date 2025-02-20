@@ -73,7 +73,7 @@ async function calculateCO2() {
     };
 
     try {
-        const response = await fetch('https://concise-partly-colt.ngrok-free.app/calculate', {
+        const response = await fetch('https://your-api-url/calculate', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -84,35 +84,46 @@ async function calculateCO2() {
         });
 
         const result = await response.json();
-        const co2Value = result.total_co2.toFixed(2);
         
-        // Generate a unique key based on CO2 value and timestamp
-        const timestamp = Date.now();
-        const key = btoa(`${co2Value}-${timestamp}`);
-        
-        // Store the key in localStorage
-        localStorage.setItem('co2Key', key);
-        
-        // Calculate individual CO2 values
-        const co2Breakdown = {
+        // Store history key in localStorage
+        if (result.history_key) {
+            localStorage.setItem('co2_history_key', result.history_key);
+        }
+
+        const params = new URLSearchParams({
+            co2: result.total_co2.toFixed(2),
             car: (data.car * 0.21).toFixed(2),
             bus: (data.bus * 0.05).toFixed(2),
             meat: (data.meat * 5.0).toFixed(2),
             veggie: (data.veggie * 2.0).toFixed(2),
-            energy: (data.energy * 0.45).toFixed(2)
-        };
-        
-        const params = new URLSearchParams({
-            co2: co2Value,
-            key: key,
-            ...co2Breakdown
+            energy: (data.energy * 0.45).toFixed(2),
+            key: result.history_key
         });
         
-        window.location.href = `dashboard.html?${params.toString()}`;
+        window.location.href = `result.html?${params.toString()}`;
 
     } catch (error) {
         console.error('Fehler:', error);
         alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
+    }
+}
+
+// Funktion zum Anzeigen des Ergebnisses auf der result.html Seite
+function showResult() {
+    const resultDiv = document.getElementById('result');
+    if (resultDiv) {
+        const co2Result = localStorage.getItem('co2Result');
+        if (co2Result) {
+            resultDiv.innerHTML = `
+                <h2>Dein CO₂-Ausstoß ist: ${co2Result} kg</h2>
+            `;
+            resultDiv.style.display = 'block';
+            setTimeout(() => {
+                resultDiv.classList.add('active');
+            }, 50);
+            // Löschen Sie das Ergebnis aus dem localStorage
+            localStorage.removeItem('co2Result');
+        }
     }
 }
 
