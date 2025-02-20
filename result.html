@@ -162,6 +162,42 @@
         .high-co2 .bar {
             background-color: #808080;
         }
+
+        .key-display {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .key-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        #keyText {
+            padding: 8px 12px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .copy-button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .copy-button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
@@ -169,6 +205,13 @@
     <div class="container">
         <div class="result-container">
             <div id="resultText"></div>
+            <div id="keyDisplay" class="key-display">
+                <h3>Dein persönlicher CO₂-Key:</h3>
+                <div class="key-box">
+                    <span id="keyText"></span>
+                    <button onclick="copyKey()" class="copy-button">Kopieren</button>
+                </div>
+            </div>
             <div class="co2-breakdown">
                 <h3>CO₂-Ausstoß nach Quelle:</h3>
                 <div id="breakdownBars" class="breakdown-bars"></div>
@@ -234,6 +277,12 @@
         });
         document.getElementById('breakdownBars').innerHTML = breakdownHTML;
 
+        // Display CO2 key
+        const key = urlParams.get('key');
+        if (key) {
+            document.getElementById('keyText').textContent = key;
+        }
+
         function startTransition(url) {
             const transition = document.createElement('div');
             transition.className = 'page-transition';
@@ -243,6 +292,15 @@
             setTimeout(() => {
                 window.location.href = url;
             }, 900);
+        }
+
+        function copyKey() {
+            const keyText = document.getElementById('keyText').textContent;
+            navigator.clipboard.writeText(keyText).then(() => {
+                alert('Key wurde in die Zwischenablage kopiert!');
+            }).catch(err => {
+                console.error('Fehler beim Kopieren:', err);
+            });
         }
     </script>
 </body>

@@ -23,5 +23,16 @@
   </audio>
   <button class="music-button">▶ © 2025-2025 Oliver, Malik, Mika</button>
   <button class="nav-button">Zum CO₂-Rechner</button>
+  <div class="login-container">
+    <button id="loginBtn" class="login-button">Login</button>
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Login mit CO₂-Key</h2>
+            <input type="text" id="keyInput" placeholder="Geben Sie Ihren CO₂-Key ein">
+            <button onclick="validateKey()">Bestätigen</button>
+        </div>
+    </div>
+  </div>
   <script src="static/script2.js"></script>
 </body>

@@ -86,6 +86,13 @@ async function calculateCO2() {
         const result = await response.json();
         const co2Value = result.total_co2.toFixed(2);
         
+        // Generate a unique key based on CO2 value and timestamp
+        const timestamp = Date.now();
+        const key = btoa(`${co2Value}-${timestamp}`);
+        
+        // Store the key in localStorage
+        localStorage.setItem('co2Key', key);
+        
         // Calculate individual CO2 values
         const co2Breakdown = {
             car: (data.car * 0.21).toFixed(2),
@@ -95,9 +102,9 @@ async function calculateCO2() {
             energy: (data.energy * 0.45).toFixed(2)
         };
         
-        // Convert to URL parameters
         const params = new URLSearchParams({
             co2: co2Value,
+            key: key,
             ...co2Breakdown
         });
         
