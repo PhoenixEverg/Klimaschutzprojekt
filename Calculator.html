@@ -63,15 +63,15 @@
         <div class="section active" id="section1" style="display: block;">
             <h2>Transport</h2>
             <div class="form-group">
-                <label for="car">Auto (Kilometer):</label>
+                <label for="car">Auto (Kilometer) pro Tag:</label>
                 <input type="number" id="car" name="car" min="0" required>
             </div>
             <div class="form-group">
-                <label for="bus">Bus/ÖPNV (Kilometer):</label>
+                <label for="bus">Bus/ÖPNV (Kilometer) pro Tag:</label>
                 <input type="number" id="bus" name="bus" min="0" required>
             </div>
             <div class="form-group">
-                <label for="bike">Fahrrad (Kilometer):</label>
+                <label for="bike">Fahrrad (Kilometer) pro Tag:</label>
                 <input type="number" id="bike" name="bike" min="0" required>
             </div>
             <button onclick="startTransition('index.html')" class="nav-button">Zurück zur Startseite</button>
@@ -81,11 +81,11 @@
         <div class="section" id="section2" style="display: none;">
             <h2>Ernährung</h2>
             <div class="form-group">
-                <label for="meat">Fleischkonsum (kg):</label>
+                <label for="meat">Fleischkonsum (kg) pro Tag:</label>
                 <input type="number" id="meat" name="meat" min="0" required>
             </div>
             <div class="form-group">
-                <label for="veggie">Gemüsekonsum (kg):</label>
+                <label for="veggie">Gemüsekonsum (kg) pro Tag:</label>
                 <input type="number" id="veggie" name="veggie" min="0" required>
             </div>
             <button type="button" onclick="previousSection(1)">Zurück</button>
@@ -95,7 +95,7 @@
         <div class="section" id="section3" style="display: none;">
             <h2>Energie</h2>
             <div class="form-group">
-                <label for="energy">Stromverbrauch (kWh):</label>
+                <label for="energy">Stromverbrauch (kWh) pro Tag:</label>
                 <input type="number" id="energy" name="energy" min="0" required>
             </div>
             <button type="button" onclick="previousSection(2)">Zurück</button>

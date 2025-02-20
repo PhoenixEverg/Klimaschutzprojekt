@@ -108,30 +108,11 @@ async function calculateCO2() {
             ...co2Breakdown
         });
         
-        window.location.href = `result.html?${params.toString()}`;
+        window.location.href = `dashboard.html?${params.toString()}`;
 
     } catch (error) {
         console.error('Fehler:', error);
         alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
-    }
-}
-
-// Funktion zum Anzeigen des Ergebnisses auf der result.html Seite
-function showResult() {
-    const resultDiv = document.getElementById('result');
-    if (resultDiv) {
-        const co2Result = localStorage.getItem('co2Result');
-        if (co2Result) {
-            resultDiv.innerHTML = `
-                <h2>Dein CO₂-Ausstoß ist: ${co2Result} kg</h2>
-            `;
-            resultDiv.style.display = 'block';
-            setTimeout(() => {
-                resultDiv.classList.add('active');
-            }, 50);
-            // Löschen Sie das Ergebnis aus dem localStorage
-            localStorage.removeItem('co2Result');
-        }
     }
 }
 

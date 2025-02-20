@@ -79,11 +79,10 @@ document.addEventListener('DOMContentLoaded', function() {
 function validateKey() {
     const keyInput = document.getElementById('keyInput').value;
     try {
-        const decodedKey = atob(keyInput);
-        const [co2Value, timestamp] = decodedKey.split('-');
-        
-        if (co2Value && timestamp) {
-            window.location.href = `result.html?co2=${co2Value}&key=${keyInput}`;
+        const decodedData = JSON.parse(atob(keyInput));
+        if (decodedData.co2 && decodedData.timestamp) {
+            localStorage.setItem('co2Key', keyInput);
+            window.location.href = `dashboard.html?key=${keyInput}`;
         } else {
             alert('Ungültiger CO₂-Key');
         }

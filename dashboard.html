@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CO₂-Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/style.css">
+    <style>
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .dashboard-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .key-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .key-display {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+
+        .suggestions-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .suggestions-list li {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-left: 4px solid #4CAF50;
+            border-radius: 4px;
+        }
+
+        .history-chart {
+            width: 100%;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .nav-buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .nav-buttons button {
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-card">
+            <h2>Dein CO₂-Key</h2>
+            <div class="key-display">
+                <span id="keyText"></span>
+                <button onclick="copyKey()" class="copy-button">Kopieren</button>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>Aktueller CO₂-Ausstoß</h2>
+            <div id="currentCO2"></div>
+            <div class="history-chart" id="co2Chart"></div>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>Verbesserungsvorschläge</h2>
+            <ul class="suggestions-list" id="suggestionsList"></ul>
+        </div>
+    </div>
+
+    <div class="nav-buttons">
+        <button onclick="window.location.href='Calculator.html'" class="button">Neuer CO₂-Check</button>
+        <button onclick="window.location.href='index.html'" class="button">Startseite</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const key = urlParams.get('key') || localStorage.getItem('co2Key');
+        const co2Value = urlParams.get('co2');
+        
+        // Zeige den Key an
+        if (key) {
+            document.getElementById('keyText').textContent = key;
+        } else {
+            document.getElementById('keyText').textContent = 'Kein Key verfügbar';
+        }
+
+        function copyKey() {
+            const keyText = document.getElementById('keyText').textContent;
+            navigator.clipboard.writeText(keyText).then(() => {
+                alert('Key wurde in die Zwischenablage kopiert!');
+            }).catch(err => {
+                console.error('Fehler beim Kopieren:', err);
+            });
+        }
+
+        // Zeige den aktuellen CO2-Wert an
+        if (co2Value) {
+            document.getElementById('currentCO2').innerHTML = `
+                <h3>Aktueller Wert: ${co2Value} kg CO₂</h3>
+            `;
+        }
+
+        // Hole die individuellen CO2-Werte aus den URL-Parametern
+        const carCO2 = parseFloat(urlParams.get('car') || '0');
+        const busCO2 = parseFloat(urlParams.get('bus') || '0');
+        const meatCO2 = parseFloat(urlParams.get('meat') || '0');
+        const energyCO2 = parseFloat(urlParams.get('energy') || '0');
+
+        // Generiere dynamische Verbesserungsvorschläge basierend auf den tatsächlichen Werten
+        const suggestions = [];
+        const totalCO2 = parseFloat(co2Value || '0');
+
+        if (totalCO2 > 0) {
+            // Transport
+            if (carCO2 > 50) {
+                suggestions.push("Dein Auto-CO₂-Ausstoß ist hoch. Versuche öfter öffentliche Verkehrsmittel oder das Fahrrad zu nutzen.");
+            }
+            
+            // Ernährung
+            if (meatCO2 > 25) {
+                suggestions.push("Dein Fleischkonsum hat einen hohen CO₂-Ausstoß. Versuche mehr pflanzliche Alternativen.");
+            }
+            
+            // Energie
+            if (energyCO2 > 100) {
+                suggestions.push("Dein Energieverbrauch ist hoch. Verwende energieeffiziente Geräte und schalte sie komplett aus statt im Standby.");
+            }
+
+            // Wenn der Gesamtausstoß hoch ist
+            if (totalCO2 > 1000) {
+                suggestions.push("Dein Gesamt-CO₂-Ausstoß ist sehr hoch. Versuche in allen Bereichen Einsparungen vorzunehmen.");
+            }
+        }
+
+        // Wenn keine spezifischen Vorschläge generiert wurden und CO2-Wert existiert
+        if (suggestions.length === 0 && totalCO2 > 0) {
+            suggestions.push("Dein CO₂-Ausstoß ist relativ niedrig! Hier sind trotzdem einige allgemeine Tipps:");
+            suggestions.push("- Achte weiterhin auf energieeffiziente Geräte");
+            suggestions.push("- Nutze wenn möglich erneuerbare Energien");
+            suggestions.push("- Kaufe saisonale und regionale Produkte");
+        } else if (totalCO2 === 0) {
+            suggestions.push("Bitte berechne zuerst deinen CO₂-Ausstoß.");
+        }
+
+        // Füge die Vorschläge zur Liste hinzu
+        const suggestionsList = document.getElementById('suggestionsList');
+        suggestionsList.innerHTML = ''; // Liste leeren
+        suggestions.forEach(suggestion => {
+            const li = document.createElement('li');
+            li.textContent = suggestion;
+            suggestionsList.appendChild(li);
+        });
+
+        // Erstelle einen Chart für die CO2-Historie
+        const ctx = document.getElementById('co2Chart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Aktuell', 'Ziel -10%', 'Ziel -20%', 'Ziel -30%', 'Ziel -40%'],
+                datasets: [{
+                    label: 'CO₂-Ausstoß (kg)',
+                    data: co2Value ? [
+                        parseFloat(co2Value),
+                        parseFloat(co2Value) * 0.9,
+                        parseFloat(co2Value) * 0.8,
+                        parseFloat(co2Value) * 0.7,
+                        parseFloat(co2Value) * 0.6
+                    ] : [],
+                    borderColor: '#4CAF50',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
