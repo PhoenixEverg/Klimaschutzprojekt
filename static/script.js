@@ -73,7 +73,7 @@ async function calculateCO2() {
     };
 
     try {
-        const response = await fetch('https://your-api-url/calculate', {
+        const response = await fetch('https://concise-partly-colt.ngrok-free.app/calculate', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -84,20 +84,29 @@ async function calculateCO2() {
         });
 
         const result = await response.json();
+        const co2Value = result.total_co2.toFixed(2);
         
-        // Store history key in localStorage
-        if (result.history_key) {
-            localStorage.setItem('co2_history_key', result.history_key);
-        }
-
+        // Generate a unique key based on CO2 value and timestamp
+        const timestamp = Date.now();
+        const key = btoa(`${co2Value}-${timestamp}`);
+        
+        // Store the key in localStorage
+        localStorage.setItem('co2Key', key);
+        
+        // Calculate individual CO2 values
+        const co2Breakdown = {
+            car: (data.car * 0.109).toFixed(2),
+            bus: (data.bus * 0.09).toFixed(2),
+            meat: (data.meat * 6.63).toFixed(2),
+            veggie: (data.veggie * 1.13).toFixed(2),
+            energy: (data.energy * 0.474).toFixed(2)
+        };
+        
         const params = new URLSearchParams({
-            co2: result.total_co2.toFixed(2),
-            car: (data.car * 0.21).toFixed(2),
-            bus: (data.bus * 0.05).toFixed(2),
-            meat: (data.meat * 5.0).toFixed(2),
-            veggie: (data.veggie * 2.0).toFixed(2),
-            energy: (data.energy * 0.45).toFixed(2),
-            key: result.history_key
+            co2: co2Value,
+            key: key,
+            ...co2Breakdown,
+            suggestions: encodeURIComponent(JSON.stringify(result.suggestions))
         });
         
         window.location.href = `result.html?${params.toString()}`;
