@@ -27,7 +27,13 @@ def calculate_co2(data):
 def validate_data(data):
     errors = []
     valid_fields = ['car', 'bus', 'energy', 'meat', 'veggie']
-    
+
+    # Check for negative values
+    for field in valid_fields:
+        if data.get(field, 0) < 0:
+            errors.append("Eingabewerte dürfen nicht negativ sein.")
+            break  # Stop after finding the first error to avoid duplicate messages
+
     if not any(data.get(field, 0) for field in valid_fields):
         errors.append("Mindestens ein Wert muss größer als 0 sein")
     
